@@ -9,12 +9,12 @@ final class Fmt {
     private Fmt() {
     }
 
-    /** 81234 -> "1:21.234" */
+    /** 94476 -> "1:34.5" */
     static String lapTime(long ms) {
         if (ms <= 0) {
             return "-";
         }
-        return String.format("%d:%05.1f", ms / 60_000, (ms % 60_000) / 1000.0);
+        return String.format("%d:%04.1f", ms / 60_000, (ms % 60_000) / 1000.0);
     }
 
     /** 5321000 -> "1:28:41" */
