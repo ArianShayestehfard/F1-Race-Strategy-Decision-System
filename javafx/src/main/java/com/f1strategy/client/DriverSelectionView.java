@@ -17,11 +17,13 @@ class DriverSelectionView extends VBox {
 
     private final ObjectProperty<String> race = new SimpleObjectProperty<>();
     private final ObjectProperty<String> driver = new SimpleObjectProperty<>();
+    private final ApiClient api;
     private final ListView<String> list = new ListView<>();
     private final Label status = Ui.label("Select a race first.", "banner-info");
     private final Button loadButton = Ui.button("Load drivers", true);
 
     DriverSelectionView(ApiClient api) {
+        this.api = api;
         setSpacing(12);
         Ui.padded(this, 16);
 
