@@ -19,6 +19,7 @@ class IngestRequest(BaseModel):
     year: int
     round: int
     session: str = "R"
+    source: str = Field("openf1", description="openf1 (real data, no auth) | fastf1 (official server) ")
     demo: bool = Field(False, description="generate an offline demo race instead of downloading")
 
 
@@ -60,8 +61,11 @@ def ingest_endpoint(req: IngestRequest) -> dict:
     try:
         if req.demo:
             return ingest.generate_demo_race(year=req.year or 2024, rnd=req.round or 8)
+        if req.source == "openf1":
+            from .openf1_ingest import ingest_openf1
+            return ingest_openf1(req.year, req.round)
         return ingest.ingest_race(req.year, req.round, req.session)
-    except Exception as exc:  # network errors from FastF1, bad round, ...
+    except Exception as exc:  # network errors, bad round, ...
         raise HTTPException(status_code=502, detail=f"ingest failed: {exc}") from exc
 
 

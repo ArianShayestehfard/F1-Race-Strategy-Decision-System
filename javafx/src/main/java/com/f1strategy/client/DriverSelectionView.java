@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -12,62 +11,74 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
- * Tab 2 — drivers of the selected race.
+ * Tab 2 — drivers of the selected race; the driver feeds every other tab.
  */
-public class DriverSelectionView extends VBox {
+class DriverSelectionView extends VBox {
 
     private final ObjectProperty<String> race = new SimpleObjectProperty<>();
     private final ObjectProperty<String> driver = new SimpleObjectProperty<>();
     private final ListView<String> list = new ListView<>();
+    private final Label status = Ui.label("Select a race first.", "banner-info");
+    private final Button loadButton = Ui.button("Load drivers", true);
 
-    public DriverSelectionView(ApiClient api) {
-        setPadding(new Insets(16));
-        setSpacing(10);
+    DriverSelectionView(ApiClient api) {
+        setSpacing(12);
+        Ui.padded(this, 16);
 
-        Label hint = new Label("Drivers of the selected race:");
-        Label status = new Label();
-        Button load = new Button("Load drivers");
-        load.setOnAction(e -> {
+        list.setCellFactory(v -> new javafx.scene.control.ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item);
+            }
+        });
+        VBox.setVgrow(list, Priority.ALWAYS);
+
+        loadButton.setOnAction(e -> {
             String raceId = race.get();
             if (raceId == null) {
-                status.setText("Select a race first (Races tab).");
+                status.setText("Select a race in the Races tab first.");
                 return;
             }
-            new Thread(() -> {
-                try {
-                    JsonNode drivers = api.get("/races/" + raceId + "/drivers");
-                    var items = FXCollections.<String>observableArrayList();
-                    for (JsonNode d : drivers) {
-                        items.add(d.get("code").asText() + " — " + d.path("fullName").asText()
-                                + " (" + d.path("team").asText() + ")");
-                    }
-                    javafx.application.Platform.runLater(() -> {
+            loadButton.setDisable(true);
+            status.setText("Loading drivers…");
+            var holder = new java.util.concurrent.atomic.AtomicReference<JsonNode>();
+            Async.run(
+                    () -> {
+                        holder.set(api.get("/races/" + raceId + "/drivers"));
+                    },
+                    () -> {
+                        loadButton.setDisable(false);
+                        var items = FXCollections.<String>observableArrayList();
+                        for (JsonNode d : holder.get()) {
+                            items.add(String.format("%-4s  %s  ·  %s",
+                                    d.path("code").asText(), d.path("fullName").asText(),
+                                    d.path("team").asText()));
+                        }
                         list.setItems(items);
-                        status.setText(items.size() + " drivers");
+                        status.setText(items.size() + " drivers — pick one, then use Analyze / Simulate / Strategy.");
+                    },
+                    msg -> {
+                        loadButton.setDisable(false);
+                        status.setText("Error: " + msg);
+                        status.getStyleClass().add("banner-error");
                     });
-                } catch (Exception ex) {
-                    javafx.application.Platform.runLater(() ->
-                            status.setText("Error: " + ex.getMessage()));
-                }
-            }).start();
         });
-
         list.getSelectionModel().selectedItemProperty().addListener((obs, o, sel) -> {
             if (sel != null) {
-                driver.set(sel.split(" — ")[0].toLowerCase());
+                driver.set(sel.substring(0, 3).toLowerCase());
             }
         });
 
-        VBox.setVgrow(list, Priority.ALWAYS);
-        getChildren().addAll(hint, load, list, status);
+        getChildren().addAll(Ui.card("Drivers of the selected race", loadButton, status), list);
     }
 
-    public void setRace(String raceId) {
+    void setRace(String raceId) {
         race.set(raceId);
         list.getItems().clear();
     }
 
-    public ObjectProperty<String> driverProperty() {
+    ObjectProperty<String> driverProperty() {
         return driver;
     }
 }

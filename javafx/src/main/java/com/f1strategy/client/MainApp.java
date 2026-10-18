@@ -2,23 +2,32 @@ package com.f1strategy.client;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * F1 Race Strategy Decision Support System — desktop client.
- * Tabs: Races, Drivers, Analyze, Simulate, Strategy.
- * Requires the Spring Boot backend (:8080) and the Python engine (:8000).
+ * F1 Race Strategy — Decision Support System, desktop client.
+ * Tabs: Races (import + select) → Drivers → Analyze → Simulate → Strategy.
+ * Requires the Spring Boot backend (:8088) and the Python engine (:8000).
  */
 public class MainApp extends Application {
 
-    private static final javafx.scene.paint.Color BG = javafx.scene.paint.Color.web("#f5f6fa");
+    private static final String STYLESHEET = "/theme.css";
+    private static final String BACKEND_HOST = System.getProperty("api.base", "http://localhost:8088/api");
+    private static final String PYTHON_HOST = "http://localhost:8000";
+
     private final ApiClient api = new ApiClient();
+
+    private final Region backendDot = new Region();
+    private final Region pythonDot = new Region();
 
     @Override
     public void start(Stage stage) {
@@ -51,26 +60,63 @@ public class MainApp extends Application {
         BorderPane root = new BorderPane();
         root.setTop(header());
         root.setCenter(tabs);
-        root.setStyle("-fx-background-color: #f5f6fa;");
 
-        stage.setScene(new Scene(root, 1100, 700));
+        Scene scene = new Scene(root, 1200, 760);
+        scene.getStylesheets().add(getClass().getResource(STYLESHEET).toExternalForm());
+        stage.setScene(scene);
         stage.setTitle("F1 Race Strategy — Decision Support System");
         stage.show();
+
+        pingServices();
     }
 
     private HBox header() {
-        Label title = new Label("🏎 F1 Strategy Decision Support");
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1e272e;");
-        Label backend = new Label("backend :8088 · python :8000");
-        backend.setStyle("-fx-text-fill: #57606f;");
-        HBox h = new HBox(20, title, backend);
-        h.setPadding(new Insets(12));
-        return h;
+        backendDot.getStyleClass().add("status-dot");
+        pythonDot.getStyleClass().add("status-dot");
+
+        HBox title = new HBox(10,
+                Ui.label("🏎 F1 Strategy Decision Support", "app-title"),
+                Ui.label("pit now or not?", "app-sub"));
+        title.setAlignment(Pos.CENTER_LEFT);
+
+        HBox services = new HBox(8,
+                backendDot, Ui.label("backend :8088", "app-sub"),
+                pythonDot, Ui.label("python :8000", "app-sub"));
+        services.setAlignment(Pos.CENTER_RIGHT);
+
+        HBox bar = new HBox(20, title, Ui.spacer(), services);
+        bar.getStyleClass().add("header");
+        bar.setPadding(new Insets(12, 20, 12, 20));
+        return bar;
     }
 
-    private Tab tab(String title, javafx.scene.Node content) {
-        Tab t = new Tab(title, content);
-        return t;
+    /** Lights the header dots green/red so the user sees what is reachable. */
+    private void pingServices() {
+        Async.run(
+                () -> api.get("/engine/health"),
+                () -> {
+                    backendDot.getStyleClass().add("ok");
+                },
+                msg -> {
+                    backendDot.getStyleClass().add("down");
+                });
+        Async.run(
+                () -> {
+                    java.net.http.HttpClient.newHttpClient().send(
+                            java.net.http.HttpRequest.newBuilder(
+                                    java.net.URI.create(PYTHON_HOST + "/health")).GET().build(),
+                            java.net.http.HttpResponse.BodyHandlers.discarding());
+                },
+                () -> {
+                    pythonDot.getStyleClass().add("ok");
+                },
+                msg -> {
+                    pythonDot.getStyleClass().add("down");
+                });
+    }
+
+    private Tab tab(String title, VBox content) {
+        return new Tab(title, content);
     }
 
     public static void main(String[] args) {

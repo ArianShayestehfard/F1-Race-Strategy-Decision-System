@@ -1,83 +1,116 @@
 package com.f1strategy.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
- * Tab 3 — statistical analysis (Phase 6): pace trend chart + raw report.
+ * Tab 3 — statistical analysis (pace trend chart + summary stat cards).
  */
-public class AnalyzeView extends VBox {
+class AnalyzeView extends VBox {
 
     private final ObjectProperty<String> race = new SimpleObjectProperty<>();
     private final ObjectProperty<String> driver = new SimpleObjectProperty<>();
+    private final ApiClient api;
+
+    private final Button analyzeButton = Ui.button("Analyze driver", true);
+    private final Label status = Ui.label("", "banner-info");
     private final TextArea report = new TextArea();
     private final LineChart<Number, Number> chart;
-    private final Label status = new Label();
+    private final VBox statsBox = new VBox(10);
 
-    public AnalyzeView(ApiClient api) {
-        setPadding(new Insets(16));
-        setSpacing(10);
+    AnalyzeView(ApiClient api) {
+        this.api = api;
+        setSpacing(12);
+        Ui.padded(this, 16);
 
-        NumberAxis x = new NumberAxis("Lap", 0, 60, 5);
-        NumberAxis y = new NumberAxis("Lap time (s)", 60, 110, 5);
-        chart = new LineChart<>(x, y);
-        chart.setTitle("Pace trend");
-        chart.setPrefHeight(320);
+        chart = new LineChart<>(new NumberAxis(), new NumberAxis());
+        chart.setTitle("Lap time per lap");
         chart.setCreateSymbols(false);
-
-        Button analyze = new Button("Analyze driver");
-        analyze.setOnAction(e -> run(api));
-        report.setPrefRowCount(12);
+        chart.setLegendVisible(false);
+        chart.setPrefHeight(320);
         VBox.setVgrow(chart, Priority.ALWAYS);
 
-        getChildren().addAll(analyze, status, chart, report);
+        report.setPrefRowCount(10);
+        report.setEditable(false);
+
+        analyzeButton.setOnAction(e -> analyze());
+
+        getChildren().addAll(
+                Ui.card("Statistical analysis — select a race and a driver first", analyzeButton, status),
+                statsBox, chart,
+                Ui.card("Raw report", report));
     }
 
-    private void run(ApiClient api) {
-        String r = race.get(), d = driver.get();
-        if (r == null || d == null) {
-            status.setText("Select a race and a driver first.");
+    private void analyze() {
+        String raceId = race.get(), driverId = driver.get();
+        if (raceId == null || driverId == null) {
+            status.setText("Pick a race (tab 1) and a driver (tab 2) first.");
             return;
         }
-        new Thread(() -> {
-            try {
-                JsonNode res = api.get("/analyze/" + r + "/" + d);
-                Platform.runLater(() -> {
-                    var series = new XYChart.Series<Number, Number>();
-                    series.setName(d);
-                    for (JsonNode p : res.path("pace_trend")) {
-                        series.getData().add(new XYChart.Data<>(
-                                p.get("lap").asDouble(), p.get("lap_time_ms").asDouble() / 1000.0));
-                    }
-                    chart.getData().setAll(series);
-                    report.setText(res.toPrettyString());
-                    status.setText("Best lap: " + res.path("best_lap_ms").asLong() + " ms · avg: "
-                            + res.path("avg_lap_ms").asLong() + " ms");
+        analyzeButton.setDisable(true);
+        status.setText("Analyzing…");
+        var holder = new java.util.concurrent.atomic.AtomicReference<JsonNode>();
+        Async.run(
+                () -> {
+                    holder.set(api.get("/analyze/" + raceId + "/" + driverId));
+                },
+                () -> {
+                    analyzeButton.setDisable(false);
+                    status.setText("");
+                    render(holder.get());
+                },
+                msg -> {
+                    analyzeButton.setDisable(false);
+                    status.setText("Error: " + msg);
+                    status.getStyleClass().add("banner-error");
                 });
-            } catch (Exception ex) {
-                Platform.runLater(() -> status.setText("Error: " + ex.getMessage()));
-            }
-        }).start();
     }
 
-    public void setRace(String raceId) {
+    private void render(JsonNode res) {
+        statsBox.getChildren().setAll(new HBox(12,
+                statCard("Best lap", Fmt.lapTime(res.path("best_lap_ms").asLong())),
+                statCard("Average lap", Fmt.lapTime(res.path("avg_lap_ms").asLong())),
+                statCard("Fuel effect",
+                        res.path("fuel_effect_s_per_lap").asText("-") + " s/lap/kg"),
+                statCard("Laps analyzed", String.valueOf(res.path("pace_trend").size()))));
+
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        for (JsonNode p : res.path("pace_trend")) {
+            series.getData().add(new XYChart.Data<>(
+                    p.get("lap").asDouble(), p.get("lap_time_ms").asDouble() / 1000.0));
+        }
+        chart.getData().setAll(series);
+        chart.getXAxis().setLabel("Lap");
+        chart.getYAxis().setLabel("Lap time (s)");
+        report.setText(res.toPrettyString());
+    }
+
+    private VBox statCard(String caption, String value) {
+        VBox card = Ui.stat(caption, value);
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setPrefWidth(220);
+        return card;
+    }
+
+    void setRace(String raceId) {
         race.set(raceId);
         chart.getData().clear();
         report.clear();
+        statsBox.getChildren().clear();
     }
 
-    public void setDriver(String driverId) {
+    void setDriver(String driverId) {
         driver.set(driverId);
     }
 }

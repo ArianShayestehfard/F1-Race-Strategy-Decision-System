@@ -11,13 +11,16 @@ Spring Boot is the **only** client; JavaFX never talks to Python directly.
 ```
 
 ### `POST /ingest`
-Download one race via FastF1 and store it in SQLite.
+Download one race and store it in SQLite. `source` picks the data provider:
+`openf1` (default — real data, no auth), `fastf1` (official F1 server,
+needs open network/auth) or `"demo": true` (offline synthetic race).
 ```json
 // request
-{ "year": 2024, "round": 8, "session": "R" }
+{ "year": 2024, "round": 8, "source": "openf1" }
 // response
-{ "race_id": "2024-08", "name": "Monaco Grand Prix", "laps_stored": 6234,
-  "drivers_stored": 20, "pit_stops_stored": 57 }
+{ "race_id": "2024-8", "name": "Monaco Grand Prix", "source": "openf1",
+  "session_key": 9523, "laps_stored": 1217, "drivers_stored": 16,
+  "pit_stops_stored": 23, "note": "..." }
 ```
 
 ### `GET /analyze/{race_id}/{driver_id}`

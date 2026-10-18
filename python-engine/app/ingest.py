@@ -242,12 +242,18 @@ def main() -> None:
     p = argparse.ArgumentParser(description="Ingest an F1 race into SQLite")
     p.add_argument("--year", type=int)
     p.add_argument("--round", dest="rnd", type=int)
+    p.add_argument("--source", choices=["openf1", "fastf1"], default="openf1",
+                   help="openf1 = real data without auth (default); fastf1 = official F1 server")
     p.add_argument("--demo", action="store_true", help="generate offline demo race instead of downloading")
     args = p.parse_args()
     if args.demo:
         print(generate_demo_race())
     elif args.year and args.rnd:
-        print(ingest_race(args.year, args.rnd))
+        if args.source == "openf1":
+            from .openf1_ingest import ingest_openf1
+            print(ingest_openf1(args.year, args.rnd))
+        else:
+            print(ingest_race(args.year, args.rnd))
     else:
         p.error("either --demo or --year/--round required")
 

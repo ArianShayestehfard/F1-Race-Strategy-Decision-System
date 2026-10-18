@@ -1,0 +1,215 @@
+/* F1 Strategy — dark racing theme. All colors are looked-up colors so every
+   control inherits the palette; per-control rules only adjust layout. */
+
+.root {
+    -fx-bg: #0d1017;
+    -fx-bg-soft: #151a23;
+    -fx-card: #1a2029;
+    -fx-card-border: #262e3a;
+    -fx-text: #e8ecf2;
+    -fx-text-dim: #8b95a5;
+    -fx-accent: #e10600;
+    -fx-accent-soft: #ff4d47;
+    -fx-ok: #2bd576;
+    -fx-warn: #ffb020;
+    -fx-chart-line: #ffd640;
+
+    -fx-background-color: -fx-bg;
+    -fx-font-family: "Segoe UI", "Vazirmatn", sans-serif;
+    -fx-text-fill: -fx-text;
+}
+
+/* ---------- header ---------- */
+.header {
+    -fx-background-color: linear-gradient(to right, #17131a, #0d1017 40%);
+    -fx-border-color: transparent transparent -fx-card-border transparent;
+    -fx-padding: 12 20 12 20;
+}
+.app-title {
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text;
+}
+.app-sub {
+    -fx-text-fill: -fx-text-dim;
+    -fx-font-size: 12px;
+}
+.status-dot {
+    -fx-min-width: 10; -fx-min-height: 10;
+    -fx-max-width: 10; -fx-max-height: 10;
+    -fx-background-radius: 5;
+    -fx-background-color: #555;
+}
+.status-dot.ok    { -fx-background-color: -fx-ok; }
+.status-dot.down  { -fx-background-color: -fx-accent; }
+
+/* ---------- tabs ---------- */
+.tab-pane > .tab-header-area {
+    -fx-background-color: -fx-bg-soft;
+    -fx-padding: 4 8 0 8;
+}
+.tab-pane > .tab-header-area .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 8 18 8 18;
+}
+.tab-pane > .tab-header-area .tab-label {
+    -fx-text-fill: -fx-text-dim;
+    -fx-font-size: 13px;
+}
+.tab-pane > .tab-header-area .tab:selected {
+    -fx-background-color: -fx-card;
+    -fx-border-color: transparent transparent -fx-accent transparent;
+    -fx-border-width: 0 0 2 0;
+}
+.tab-pane > .tab-header-area .tab:selected .tab-label {
+    -fx-text-fill: -fx-text;
+    -fx-font-weight: bold;
+}
+
+/* ---------- generic controls ---------- */
+.button {
+    -fx-background-color: -fx-card;
+    -fx-text-fill: -fx-text;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: -fx-card-border;
+    -fx-padding: 7 16 7 16;
+    -fx-cursor: hand;
+}
+.button:hover  { -fx-border-color: -fx-accent-soft; }
+.button:pressed { -fx-background-color: #232b36; }
+.button:disabled { -fx-text-fill: -fx-text-dim; -fx-opacity: 0.6; }
+
+.button.primary {
+    -fx-background-color: -fx-accent;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+.button.primary:hover { -fx-background-color: -fx-accent-soft; }
+
+.text-field, .choice-box {
+    -fx-background-color: -fx-bg-soft;
+    -fx-text-fill: -fx-text;
+    -fx-border-color: -fx-card-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10 6 10;
+    -fx-prompt-text-fill: -fx-text-dim;
+}
+.choice-box > .label { -fx-text-fill: -fx-text; }
+.text-area {
+    -fx-control-inner-background: -fx-bg-soft;
+    -fx-text-fill: -fx-text;
+    -fx-font-family: "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-background-color: -fx-bg-soft;
+    -fx-border-color: -fx-card-border;
+    -fx-border-radius: 6;
+}
+.label { -fx-text-fill: -fx-text; }
+.dim   { -fx-text-fill: -fx-text-dim; }
+
+/* ---------- cards ---------- */
+.card {
+    -fx-background-color: -fx-card;
+    -fx-background-radius: 10;
+    -fx-border-color: -fx-card-border;
+    -fx-border-radius: 10;
+    -fx-padding: 14;
+}
+.stat-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text;
+}
+.stat-label {
+    -fx-text-fill: -fx-text-dim;
+    -fx-font-size: 11px;
+}
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text;
+}
+
+/* ---------- verdict / banners ---------- */
+.verdict-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-ok;
+}
+.banner-error {
+    -fx-background-color: #3a1215;
+    -fx-border-color: -fx-accent;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12 8 12;
+    -fx-text-fill: #ff9a96;
+}
+.banner-info {
+    -fx-text-fill: -fx-text-dim;
+}
+
+/* ---------- tables & lists ---------- */
+.table-view, .list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-card-border;
+    -fx-border-radius: 8;
+}
+.table-view .column-header-background {
+    -fx-background-color: -fx-bg-soft;
+    -fx-background-radius: 8 8 0 0;
+}
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 34;
+}
+.table-view .column-header .label {
+    -fx-text-fill: -fx-text-dim;
+    -fx-font-weight: bold;
+}
+.table-row-cell {
+    -fx-background-color: -fx-card;
+    -fx-border-color: transparent transparent #222a35 transparent;
+    -fx-table-cell-border-color: transparent;
+}
+.table-row-cell:odd { -fx-background-color: #171d26; }
+.table-row-cell:selected { -fx-background-color: #2c3542; }
+.table-view .table-cell { -fx-text-fill: -fx-text; }
+.list-cell {
+    -fx-background-color: -fx-card;
+    -fx-text-fill: -fx-text;
+    -fx-padding: 8 12 8 12;
+    -fx-border-color: transparent transparent #222a35 transparent;
+}
+.list-cell:filled:hover, .list-cell:selected {
+    -fx-background-color: #2c3542;
+}
+
+/* ---------- progress bar (confidence) ---------- */
+.progress-bar > .track {
+    -fx-background-color: -fx-bg-soft;
+    -fx-background-radius: 6;
+}
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, -fx-accent, -fx-warn);
+    -fx-background-radius: 6;
+}
+
+/* ---------- charts ---------- */
+.chart {
+    -fx-background-color: -fx-card;
+    -fx-border-color: -fx-card-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+.chart-plot-background { -fx-background-color: transparent; }
+.chart-content { -fx-padding: 8; }
+.chart-title { -fx-text-fill: -fx-text-dim; }
+.axis-label, .axis-tick-mark, .chart-legend { -fx-text-fill: -fx-text-dim; }
+.chart-vertical-grid-lines, .chart-horizontal-grid-lines {
+    -fx-stroke: #232b36;
+    -fx-stroke-dash-array: 2 4;
+}
+.default-color0.chart-series-line { -fx-stroke: -fx-chart-line; -fx-stroke-width: 2px; }

@@ -13,7 +13,7 @@
               <option value="javafx:run" />
             </list>
           </option>
-          <option name="pomFileName" value="javafx/pom.xml" />
+          <option name="pomFileName" value="pom.xml" />
           <option name="profilesMap">
             <map />
           </option>
