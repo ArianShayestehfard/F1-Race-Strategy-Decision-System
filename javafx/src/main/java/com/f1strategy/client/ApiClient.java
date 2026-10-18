@@ -23,7 +23,7 @@ public class ApiClient {
 
     public JsonNode get(String path) throws Exception {
         HttpRequest req = HttpRequest.newBuilder(URI.create(BASE + path)).GET().build();
-        HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> res = sendWithRetry(req);
         return JSON.readTree(res.body());
     }
 
@@ -32,7 +32,20 @@ public class ApiClient {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(JSON.writeValueAsString(body)))
                 .build();
-        HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> res = sendWithRetry(req);
         return JSON.readTree(res.body());
+    }
+
+    /**
+     * One retry on transient IO errors (e.g. a pooled connection closed while
+     * the backend restarts) so a race at startup does not leave empty screens.
+     */
+    private HttpResponse<String> sendWithRetry(HttpRequest req) throws Exception {
+        try {
+            return HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+        } catch (java.io.IOException transientError) {
+            Thread.sleep(800);
+            return HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+        }
     }
 }
