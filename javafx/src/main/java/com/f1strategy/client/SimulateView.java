@@ -11,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -80,10 +79,10 @@ class SimulateView extends VBox {
         simulateButton.setOnAction(e -> simulate());
 
         TableColumn<Row, Integer> cLap = new TableColumn<>("Lap");
-        cLap.setCellValueFactory(new PropertyValueFactory<>("lap"));
+        cLap.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().getLap()).asObject());
         cLap.setPrefWidth(60);
         TableColumn<Row, String> cComp = new TableColumn<>("Compound");
-        cComp.setCellValueFactory(new PropertyValueFactory<>("compound"));
+        cComp.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getCompound()));
         cComp.setCellFactory(col -> new javafx.scene.control.TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -94,13 +93,13 @@ class SimulateView extends VBox {
         });
         cComp.setPrefWidth(120);
         TableColumn<Row, Integer> cAge = new TableColumn<>("Tyre age");
-        cAge.setCellValueFactory(new PropertyValueFactory<>("tyreAge"));
+        cAge.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().getTyreAge()).asObject());
         cAge.setPrefWidth(90);
         TableColumn<Row, Integer> cPos = new TableColumn<>("Position");
-        cPos.setCellValueFactory(new PropertyValueFactory<>("position"));
+        cPos.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().getPosition()).asObject());
         cPos.setPrefWidth(90);
         TableColumn<Row, String> cPit = new TableColumn<>("Pit");
-        cPit.setCellValueFactory(new PropertyValueFactory<>("pit"));
+        cPit.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getPit()));
         cPit.setCellFactory(col -> new javafx.scene.control.TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
