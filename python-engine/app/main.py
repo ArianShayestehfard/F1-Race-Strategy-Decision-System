@@ -103,3 +103,9 @@ def recommend_endpoint(req: RecommendRequest) -> dict:
                                             req.current_compound, req.current_tyre_age)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+if __name__ == "__main__":
+    # lets you right-click -> Run in IntelliJ/PyCharm instead of using uvicorn CLI
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

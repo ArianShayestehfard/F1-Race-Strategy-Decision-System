@@ -36,21 +36,11 @@
                 <version>3.13.0</version>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.f1strategy.client.MainApp</mainClass>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>--add-modules</argument>
-                        <argument>javafx.controls</argument>
-                        <argument>--add-opens</argument>
-                        <argument>java.base/java.lang=ALL-UNNAMED</argument>
-                        <argument>-classpath</argument>
-                        <classpath/>
-                        <argument>com.f1strategy.client.MainApp</argument>
-                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

@@ -13,8 +13,12 @@ Functional UI (Phase 10): five tabs wired through the Spring Boot backend.
 ## Run
 
 ```bash
-mvn compile exec:exec
+mvn javafx:run
 ```
 
-Start the backend (:8080) and the Python engine (:8000) first.
-Base URL override: `-Dapi.base=http://localhost:8080/api`.
+(In IntelliJ IDEA: Maven tool window → javafx → Plugins → javafx → `javafx:run`,
+or right-click `MainApp` → Run once a Maven run configuration exists.)
+
+Start the backend (:8080 or :8088 if :8080 is taken) and the Python engine (:8000) first.
+Base URL override: `-Dapi.base=http://localhost:8080/api` (set in the run configuration's
+VM options via the javafx-maven-plugin `<options>`).
