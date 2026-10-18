@@ -17,3 +17,5 @@ data/cache/
 .env
 .DS_Store
 Thumbs.db
+# JetBrains module files
+*.iml
