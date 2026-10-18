@@ -116,7 +116,13 @@ public class MainApp extends Application {
     }
 
     private Tab tab(String title, VBox content) {
-        return new Tab(title, content);
+        // scrollable so nothing is clipped on smaller screens
+        javafx.scene.control.ScrollPane scroller = new javafx.scene.control.ScrollPane(content);
+        scroller.setFitToWidth(true);
+        scroller.setFitToHeight(false);
+        scroller.getStyleClass().add("edge-to-edge");
+        scroller.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+        return new Tab(title, scroller);
     }
 
     public static void main(String[] args) {
