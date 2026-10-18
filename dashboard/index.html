@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F1 Race Strategy Decision System</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500&display=swap">
+<style>
+:root{color-scheme:dark;
+ --bg:#0E1A2B;--surface:#15263D;--line:#27405F;--text:#E8EEF6;--muted:#8CA0BA;--accent:#3FB6E8;
+ --soft:#E5484D;--medium:#F2C94C;--hard:#E8EEF6;
+ --head:"Barlow Semi Condensed","Arial Narrow",sans-serif;--body:Inter,system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--body)}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding:20px clamp(16px,4vw,48px);border-bottom:1px solid var(--line)}
+h1{font:600 22px var(--head);margin:0;letter-spacing:.2px}
+h2{font:600 17px var(--head);margin:0 0 12px}
+header span{color:var(--muted);font-size:14px}
+main{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:24px;padding:24px clamp(16px,4vw,48px);max-width:1280px;margin:auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.rec{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:24px 48px;align-items:center;border-left:4px solid var(--accent)}
+.rec .big{font:700 44px/1 var(--head)}
+.rec small{display:block;color:var(--muted);margin-top:6px}
+.bar{display:flex;height:30px;border-radius:5px;overflow:hidden;gap:2px;background:var(--bg)}
+.bar i{display:flex;align-items:center;justify-content:center;font:600 13px var(--head);color:#0E1A2B}
+.c-SOFT{background:var(--soft)}.c-MEDIUM{background:var(--medium)}.c-HARD{background:var(--hard)}
+button.row{all:unset;box-sizing:border-box;display:block;width:100%;padding:14px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+button.row:hover{border-color:var(--muted)}
+button.row:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.row[aria-pressed=true]{border-color:var(--accent);background:#1A304C}
+.meta{display:flex;justify-content:space-between;margin-bottom:8px;font:600 16px var(--head)}
+.meta span:last-child{font-variant-numeric:tabular-nums;color:var(--muted)}
+.legend{display:flex;gap:16px;color:var(--muted);font-size:13px;margin-top:8px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--muted);font:12px var(--body)}
+.axis{stroke:var(--line)}
+</style>
+</head>
+<body>
+<header><h1>F1 Race Strategy Decision System</h1><span id="race"></span></header>
+<main>
+ <section class="rec" aria-live="polite">
+  <div><div class="big" id="recTitle"></div><small id="recSub"></small></div>
+  <div style="flex:1;min-width:260px"><div class="bar" id="recBar"></div></div>
+ </section>
+ <section><h2>Strategy options</h2><div id="list"></div>
+  <div class="legend"><span><b class="c-SOFT"></b>Soft</span><span><b class="c-MEDIUM"></b>Medium</span><span><b class="c-HARD"></b>Hard</span></div></section>
+ <section><h2>Tyre degradation (lap time by tyre age)</h2><div id="chart"></div></section>
+</main>
+<script src="data.js"></script>
+<script>
+const D=window.F1_DATA, $=id=>document.getElementById(id);
+const COL={SOFT:"#E5484D",MEDIUM:"#F2C94C",HARD:"#E8EEF6"};
+const fmt=t=>`${Math.floor(t/3600)}:${String(Math.floor(t%3600/60)).padStart(2,"0")}:${(t%60).toFixed(1).padStart(5,"0")}`;
+const seq=s=>s.stints.map(x=>x.compound[0]).join(" > ");
+const bar=s=>s.stints.map(x=>`<i class="c-${x.compound}" style="flex:${x.laps}">${x.laps}</i>`).join("");
+$("race").textContent=`${D.race}, ${D.laps} laps`;
+function select(i){
+ const s=D.strategies[i];
+ $("recTitle").textContent=`${s.stops}-stop: ${seq(s)}`;
+ $("recSub").textContent=s.delta===0?`Fastest option, race time ${fmt(s.time)}`:`+${s.delta.toFixed(1)} s vs. fastest, race time ${fmt(s.time)}`;
+ $("recBar").innerHTML=bar(s);
+ document.querySelectorAll("button.row").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));
+}
+$("list").innerHTML=D.strategies.map((s,i)=>`<button class="row" data-i="${i}"><div class="meta"><span>${s.stops} stop${s.stops>1?"s":""}</span><span>${s.delta===0?"Fastest":"+"+s.delta.toFixed(1)+" s"}</span></div><div class="bar">${bar(s)}</div></button>`).join("");
+$("list").onclick=e=>{const b=e.target.closest("button.row");if(b)select(+b.dataset.i)};
+select(0);
+(function(){
+ const W=600,H=280,L=48,R=12,T=12,B=36,all=Object.values(D.degradation).flat();
+ const lo=Math.floor(Math.min(...all)),hi=Math.ceil(Math.max(...all)),n=41;
+ const x=a=>L+a/(n-1)*(W-L-R),y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+ let g="";
+ for(let v=lo;v<=hi;v+=Math.ceil((hi-lo)/5))g+=`<line class="axis" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end">${v}</text>`;
+ for(let a=0;a<n;a+=10)g+=`<text x="${x(a)}" y="${H-14}" text-anchor="middle">${a}</text>`;
+ g+=`<text x="${(W+L)/2}" y="${H}" text-anchor="middle">Tyre age (laps)</text>`;
+ for(const[c,v]of Object.entries(D.degradation))g+=`<polyline fill="none" stroke="${COL[c]}" stroke-width="2.5" points="${v.map((t,a)=>x(a)+","+y(t)).join(" ")}"/>`;
+ $("chart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Lap time versus tyre age for soft, medium and hard compounds">${g}</svg>`;
+})();
+</script>
+</body>
+</html>
