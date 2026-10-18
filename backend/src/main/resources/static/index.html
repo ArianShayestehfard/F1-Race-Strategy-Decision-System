@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F1 Race Strategy Decision System</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header>
+ <h1>F1 Race Strategy Decision System</h1>
+ <div class="health">
+  <span><i class="dot" id="dotApi"></i> backend</span>
+  <span><i class="dot" id="dotEngine"></i> engine</span>
+ </div>
+ <span id="race">no race selected</span>
+</header>
+
+<nav class="tabs" id="tabs">
+ <button data-tab="races" aria-selected="true">Races</button>
+ <button data-tab="drivers" aria-selected="false">Drivers</button>
+ <button data-tab="analyze" aria-selected="false">Analyze</button>
+ <button data-tab="strategy" aria-selected="false">Strategy</button>
+ <button data-tab="simulate" aria-selected="false">Simulate</button>
+</nav>
+
+<main>
+
+ <!-- ============================== RACES ============================== -->
+<div class="tab" id="tab-races">
+ <section>
+  <h2>Import a race into the database</h2>
+  <div class="formrow">
+   <div><label for="impYear">Season</label><input id="impYear" value="2024" size="5" inputmode="numeric"></div>
+   <div><label for="impRound">Round</label><input id="impRound" value="1" size="4" inputmode="numeric"></div>
+   <div><label for="impSource">Source</label>
+    <select id="impSource">
+     <option value="openf1">OpenF1 — real data</option>
+     <option value="fastf1">FastF1 — official server</option>
+     <option value="demo">Demo — offline</option>
+    </select></div>
+   <div class="push"><button class="btn" id="btnImport">Import race</button>
+    <button class="btn ghost" id="btnRefresh">Refresh</button></div>
+  </div>
+  <div class="status" id="impStatus"></div>
+ </section>
+ <section>
+  <h2>Races</h2>
+  <table><thead><tr><th>Rd</th><th>Race</th><th>Circuit</th><th>Laps</th><th>Season</th></tr></thead>
+   <tbody id="raceRows"><tr><td colspan="5" class="empty">No races yet — import one above.</td></tr></tbody></table>
+ </section>
+</div>
+
+<!-- ============================== DRIVERS ============================= -->
+<div class="tab" id="tab-drivers" hidden>
+ <section>
+  <h2>Drivers <span class="sub" id="drvRaceHint"></span></h2>
+  <div><button class="btn" id="btnDrivers">Load drivers</button></div>
+  <div class="status" id="drvStatus"></div>
+  <div id="driverList" class="driverlist"><div class="empty">Select a race first.</div></div>
+ </section>
+</div>
+
+<!-- ============================== ANALYZE ============================ -->
+<div class="tab" id="tab-analyze" hidden>
+ <div class="grid span-all stats4">
+  <div class="stat"><div class="v" id="stBest">—</div><div class="l">Best lap</div></div>
+  <div class="stat"><div class="v" id="stAvg">—</div><div class="l">Average lap</div></div>
+  <div class="stat"><div class="v" id="stFuel">—</div><div class="l">Fuel effect (s/lap/kg)</div></div>
+  <div class="stat"><div class="v" id="stLaps">—</div><div class="l">Laps analyzed</div></div>
+ </div>
+ <section>
+  <h2>Lap time per lap</h2>
+  <div id="lapChart"><div class="empty">Run “Analyze driver”.</div></div>
+  <div><button class="btn" id="btnAnalyze">Analyze driver</button></div>
+  <div class="status" id="anaStatus"></div>
+ </section>
+ <section>
+  <h2>Tyre stints <span class="sub">real data — color = compound</span></h2>
+  <div class="bar" id="stintBar"><i style="flex:1"></i></div>
+  <div class="legend" id="stintLegend"></div>
+  <div class="muted" id="pitLine">Actual pit stops: —</div>
+  <h2 style="margin-top:20px">Machine-learning prediction</h2>
+  <div class="formrow">
+   <div><label for="mlModel">Model</label>
+    <select id="mlModel">
+     <option value="gradient_boosting">Gradient Boosting (best)</option>
+     <option value="random_forest">Random Forest</option>
+     <option value="linear_regression">Linear Regression</option>
+    </select></div>
+   <div class="push"><button class="btn" id="btnPredict">Run prediction</button></div>
+  </div>
+  <div class="status" id="mlStatus"></div>
+  <div class="muted" id="mlMeta"></div>
+  <div class="legend" id="mlPreds"></div>
+  <details class="raw"><summary>Raw report (JSON)</summary><pre id="anaRaw"></pre></details>
+ </section>
+</div>
+
+<!-- ============================== STRATEGY =========================== -->
+<div class="tab" id="tab-strategy" hidden>
+ <section class="rec span-all" aria-live="polite">
+  <div><div class="big" id="recTitle">—</div><small id="recSub">Select a race, then load the strategy plans.</small></div>
+  <div style="flex:1;min-width:260px"><div class="bar" id="recBar"></div></div>
+ </section>
+ <section>
+  <h2>Strategy options <span class="sub" id="searchModel"></span></h2>
+  <div id="planList"><div class="empty">Load the plans for the selected race.</div></div>
+  <div class="legend">
+   <span><b class="c-SOFT"></b>Soft</span><span><b class="c-MEDIUM"></b>Medium</span>
+   <span><b class="c-HARD"></b>Hard</span><span><b class="c-INTERMEDIATE"></b>Inter</span>
+   <span><b class="c-WET"></b>Wet</span>
+  </div>
+  <div style="margin-top:12px"><button class="btn ghost" id="btnRecal">Recalibrate model</button></div>
+  <div class="status" id="calStatus"></div>
+ </section>
+ <section>
+  <h2>Tyre degradation (lap time by tyre age)</h2>
+  <div id="degrChart"><div class="empty">Load the plans for the selected race.</div></div>
+ </section>
+ <section>
+  <h2>Pit now or not? <span class="sub">rain-aware recommendation</span></h2>
+  <div class="formrow">
+   <div><label for="recLap">Current lap</label><input id="recLap" value="18" size="4" inputmode="numeric"></div>
+   <div><label for="recComp">Compound now</label>
+    <select id="recComp"><option>SOFT</option><option selected>MEDIUM</option><option>HARD</option><option>INTERMEDIATE</option><option>WET</option></select></div>
+   <div class="push"><button class="btn" id="btnRecommend">Recommend strategy</button></div>
+  </div>
+  <div class="status" id="recStatus"></div>
+  <div class="verdict" id="recVerdict"></div>
+  <div class="confrow" id="recConfRow" hidden>
+   <div class="conf"><i id="recConfFill"></i></div><b id="recConfPct"></b>
+  </div>
+  <div id="recScenarios"></div>
+ </section>
+ <section>
+  <h2>Rival duel — undercut vs overcut</h2>
+  <div class="formrow">
+   <div><label for="duelLap">Current lap</label><input id="duelLap" value="18" size="4" inputmode="numeric"></div>
+   <div><label for="duelRival">Rival</label><select id="duelRival"><option value="">— load drivers —</option></select></div>
+   <div class="push"><button class="btn" id="btnDuel">Undercut vs Overcut</button></div>
+  </div>
+  <div class="status" id="duelStatus"></div>
+  <div class="verdict" id="duelVerdict"></div>
+  <div id="duelScenarios"></div>
+ </section>
+</div>
+
+<!-- ============================== SIMULATE =========================== -->
+<div class="tab" id="tab-simulate" hidden>
+ <section>
+  <h2>Run a race simulation</h2>
+  <div class="formrow">
+   <div><label for="simComp">Start compound</label>
+    <select id="simComp"><option>SOFT</option><option selected>MEDIUM</option><option>HARD</option></select></div>
+   <div><label for="simPits">Pit laps</label><input id="simPits" value="20, 40" placeholder="e.g. 20, 40" size="10"></div>
+   <div class="push">
+    <button class="btn" id="btnSimulate">Simulate race</button>
+    <button class="btn ghost" id="btnExport" disabled>Export report</button>
+   </div>
+  </div>
+  <div class="status" id="simStatus"></div>
+  <div class="verdict" id="simVerdict"></div>
+ </section>
+ <section>
+  <h2>Timeline</h2>
+  <div class="scrollbox">
+  <table><thead><tr><th>Lap</th><th>Compound</th><th>Tyre age</th><th>Position</th><th>Pit</th></tr></thead>
+   <tbody id="simRows"><tr><td colspan="5" class="empty">No simulation yet.</td></tr></tbody></table>
+  </div>
+ </section>
+</div>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>
