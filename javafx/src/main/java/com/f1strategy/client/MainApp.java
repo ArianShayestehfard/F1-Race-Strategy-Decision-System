@@ -61,7 +61,7 @@ public class MainApp extends Application {
     private HBox header() {
         Label title = new Label("🏎 F1 Strategy Decision Support");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1e272e;");
-        Label backend = new Label("backend :8080 · python :8000");
+        Label backend = new Label("backend :8088 · python :8000");
         backend.setStyle("-fx-text-fill: #57606f;");
         HBox h = new HBox(20, title, backend);
         h.setPadding(new Insets(12));

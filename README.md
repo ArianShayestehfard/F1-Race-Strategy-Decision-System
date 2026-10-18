@@ -62,7 +62,7 @@ uvicorn app.main:app --port 8000             # API + docs at /docs
 
 ```bash
 cd backend
-mvn spring-boot:run                          # REST API on :8080, Swagger at /swagger-ui.html
+mvn spring-boot:run                          # REST API on :8088 (8080 is taken on the dev machine)
 ```
 
 **3. Desktop client**

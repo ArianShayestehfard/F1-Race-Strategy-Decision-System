@@ -15,7 +15,8 @@ import java.util.Map;
  */
 public class ApiClient {
 
-    private static final String BASE = System.getProperty("api.base", "http://localhost:8080/api");
+    // backend default is 8088: 8080 is occupied by a local service on the dev machine
+    private static final String BASE = System.getProperty("api.base", "http://localhost:8088/api");
     private static final HttpClient HTTP = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(5)).build();
     private static final ObjectMapper JSON = new ObjectMapper();

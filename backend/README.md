@@ -6,7 +6,7 @@ and proxies analysis/simulation/ML calls to the Python engine.
 ## Run
 
 ```bash
-mvn spring-boot:run        # :8080
+mvn spring-boot:run        # :8088 (8080 is occupied by a local service on the dev machine)
 ```
 
 Requires the Python engine on `:8000` for `/api/simulate`, `/api/analyze`,
@@ -34,6 +34,6 @@ Swagger UI: http://localhost:8080/swagger-ui.html
 |---|---|---|
 | `f1.db.path` | `../database/race.db` | SQLite file |
 | `python.engine.url` | `http://localhost:8000` | Python engine base URL |
-| `server.port` | `8080` | HTTP port |
+| `server.port` | `8088` | HTTP port |
 
 Tests run without Python (`mvn test`): the engine client is mocked.
