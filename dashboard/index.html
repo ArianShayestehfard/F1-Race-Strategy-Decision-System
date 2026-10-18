@@ -53,7 +53,7 @@ svg text{fill:var(--muted);font:12px var(--body)}
 <script>
 const D=window.F1_DATA, $=id=>document.getElementById(id);
 const COL={SOFT:"#E5484D",MEDIUM:"#F2C94C",HARD:"#E8EEF6"};
-const fmt=t=>`${Math.floor(t/3600)}:${String(Math.floor(t%3600/60)).padStart(2,"0")}:${(t%60).toFixed(1).padStart(5,"0")}`;
+const fmt=t=>`${Math.floor(t/3600)}:${String(Math.floor(t%3600/60)).padStart(2,"0")}:${(t%60).toFixed(1).padStart(4,"0")}`;
 const seq=s=>s.stints.map(x=>x.compound[0]).join(" > ");
 const bar=s=>s.stints.map(x=>`<i class="c-${x.compound}" style="flex:${x.laps}">${x.laps}</i>`).join("");
 $("race").textContent=`${D.race}, ${D.laps} laps`;
