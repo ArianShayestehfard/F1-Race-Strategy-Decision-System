@@ -28,6 +28,14 @@ final class Ui {
         return l;
     }
 
+    /** Colored compound chip using the real F1 tyre language (S red / M yellow / H white). */
+    static Label compoundChip(String compound) {
+        Label chip = label(compound, "chip", "chip-" + compound);
+        chip.setMinWidth(52);
+        chip.setAlignment(javafx.geometry.Pos.CENTER);
+        return chip;
+    }
+
     static Button button(String text) {
         return new Button(text);
     }

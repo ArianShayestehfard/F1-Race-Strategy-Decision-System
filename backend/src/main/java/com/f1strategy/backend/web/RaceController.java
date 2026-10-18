@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -37,10 +38,12 @@ public class RaceController {
         return races.findAll();
     }
 
+    /** Only drivers that actually have lap rows in this race. */
     @GetMapping("/races/{raceId}/drivers")
     public List<Driver> driversOfRace(@PathVariable String raceId) {
+        var ids = new HashSet<>(laps.findDriverIdsByRaceId(raceId));
         return drivers.findAll().stream()
-                .filter(d -> !laps.findByRaceIdAndDriverIdOrderByLapNumber(raceId, d.getDriverId()).isEmpty())
+                .filter(d -> ids.contains(d.getDriverId()))
                 .toList();
     }
 

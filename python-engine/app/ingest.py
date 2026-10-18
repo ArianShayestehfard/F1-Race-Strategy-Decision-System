@@ -88,8 +88,10 @@ def _store_from_fastf1(ses) -> dict:
 
 # ---------------------------------------------------------------- demo mode
 FIELDS_2024 = [
-    ("max", "Max Verstappen", "VER", "Red Bull", 0.0),
-    ("pere", "Sergio Perez", "PER", "Red Bull", 0.15),
+    # driver_id must match the official 3-letter code (lowercase) so demo and
+    # real (OpenF1) data deduplicate onto the same driver rows
+    ("ver", "Max Verstappen", "VER", "Red Bull", 0.0),
+    ("per", "Sergio Perez", "PER", "Red Bull", 0.15),
     ("lec", "Charles Leclerc", "LEC", "Ferrari", 0.12),
     ("sai", "Carlos Sainz", "SAI", "Ferrari", 0.18),
     ("nor", "Lando Norris", "NOR", "McLaren", 0.20),

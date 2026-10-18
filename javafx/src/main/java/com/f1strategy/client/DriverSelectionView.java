@@ -34,36 +34,7 @@ class DriverSelectionView extends VBox {
         });
         VBox.setVgrow(list, Priority.ALWAYS);
 
-        loadButton.setOnAction(e -> {
-            String raceId = race.get();
-            if (raceId == null) {
-                status.setText("Select a race in the Races tab first.");
-                return;
-            }
-            loadButton.setDisable(true);
-            status.setText("Loading drivers…");
-            var holder = new java.util.concurrent.atomic.AtomicReference<JsonNode>();
-            Async.run(
-                    () -> {
-                        holder.set(api.get("/races/" + raceId + "/drivers"));
-                    },
-                    () -> {
-                        loadButton.setDisable(false);
-                        var items = FXCollections.<String>observableArrayList();
-                        for (JsonNode d : holder.get()) {
-                            items.add(String.format("%-4s  %s  ·  %s",
-                                    d.path("code").asText(), d.path("fullName").asText(),
-                                    d.path("team").asText()));
-                        }
-                        list.setItems(items);
-                        status.setText(items.size() + " drivers — pick one, then use Analyze / Simulate / Strategy.");
-                    },
-                    msg -> {
-                        loadButton.setDisable(false);
-                        status.setText("Error: " + msg);
-                        status.getStyleClass().add("banner-error");
-                    });
-        });
+        loadButton.setOnAction(e -> loadDrivers());
         list.getSelectionModel().selectedItemProperty().addListener((obs, o, sel) -> {
             if (sel != null) {
                 driver.set(sel.substring(0, 3).toLowerCase());
@@ -73,9 +44,48 @@ class DriverSelectionView extends VBox {
         getChildren().addAll(Ui.card("Drivers of the selected race", loadButton, status), list);
     }
 
+    private void loadDrivers() {
+        String raceId = race.get();
+        if (raceId == null) {
+            status.setText("Select a race in the Races tab first.");
+            return;
+        }
+        loadButton.setDisable(true);
+        status.setText("Loading drivers…");
+        var holder = new java.util.concurrent.atomic.AtomicReference<JsonNode>();
+        Async.run(
+                () -> {
+                    holder.set(api.get("/races/" + raceId + "/drivers"));
+                },
+                () -> {
+                    loadButton.setDisable(false);
+                    JsonNode body = holder.get();
+                    if (body == null || !body.isArray()) {
+                        status.setText("Unexpected backend response — check the backend Run tab.");
+                        status.getStyleClass().add("banner-error");
+                        return;
+                    }
+                    var items = FXCollections.<String>observableArrayList();
+                    for (JsonNode d : body) {
+                        items.add(String.format("%-4s  %s  ·  %s",
+                                d.path("code").asText(""), d.path("fullName").asText(""),
+                                d.path("team").asText("")));
+                    }
+                    list.setItems(items);
+                    status.setText(items.size() + " drivers — pick one, then use Analyze / Simulate / Strategy.");
+                },
+                msg -> {
+                    loadButton.setDisable(false);
+                    status.setText("Error: " + msg);
+                    status.getStyleClass().add("banner-error");
+                });
+    }
+
+    /** Picking a race in tab 1 loads its drivers automatically — no extra click. */
     void setRace(String raceId) {
         race.set(raceId);
         list.getItems().clear();
+        loadDrivers();
     }
 
     ObjectProperty<String> driverProperty() {

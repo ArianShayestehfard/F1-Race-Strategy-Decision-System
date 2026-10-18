@@ -1,32 +1,39 @@
-/* F1 Strategy — dark racing theme. All colors are looked-up colors so every
-   control inherits the palette; per-control rules only adjust layout. */
+/* F1 Strategy — dark racing theme.
+   Design tokens first (spacing + palette as looked-up colors), then
+   component rules. Per-component rules only adjust layout/spacing; all
+   colors come from the tokens so the palette stays consistent. */
 
 .root {
-    -fx-bg: #0d1017;
-    -fx-bg-soft: #151a23;
-    -fx-card: #1a2029;
-    -fx-card-border: #262e3a;
-    -fx-text: #e8ecf2;
-    -fx-text-dim: #8b95a5;
-    -fx-accent: #e10600;
+    /* palette */
+    -fx-bg: #0b0e14;
+    -fx-bg-soft: #12161f;
+    -fx-card: #171c26;
+    -fx-card-2: #1d2430;
+    -fx-line: #242c3a;
+    -fx-text: #edf1f7;
+    -fx-text-dim: #9aa4b5;
+    -fx-accent: #e10600;          /* F1 red — primary actions only */
     -fx-accent-soft: #ff4d47;
-    -fx-ok: #2bd576;
-    -fx-warn: #ffb020;
-    -fx-chart-line: #ffd640;
+    -fx-ok: #34d17c;
+    -fx-warn: #f5a524;
+    -fx-soft-comp: #ff5a5a;       /* F1 tyre language */
+    -fx-medium-comp: #ffd640;
+    -fx-hard-comp: #e8ecf2;
 
     -fx-background-color: -fx-bg;
     -fx-font-family: "Segoe UI", "Vazirmatn", sans-serif;
+    -fx-font-size: 13px;
     -fx-text-fill: -fx-text;
 }
 
 /* ---------- header ---------- */
 .header {
-    -fx-background-color: linear-gradient(to right, #17131a, #0d1017 40%);
-    -fx-border-color: transparent transparent -fx-card-border transparent;
-    -fx-padding: 12 20 12 20;
+    -fx-background-color: linear-gradient(to right, #1a1016, -fx-bg 45%);
+    -fx-border-color: transparent transparent -fx-line transparent;
+    -fx-padding: 14 24 14 24;
 }
 .app-title {
-    -fx-font-size: 21px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: -fx-text;
 }
@@ -35,29 +42,30 @@
     -fx-font-size: 12px;
 }
 .status-dot {
-    -fx-min-width: 10; -fx-min-height: 10;
-    -fx-max-width: 10; -fx-max-height: 10;
+    -fx-min-width: 9; -fx-min-height: 9;
+    -fx-max-width: 9; -fx-max-height: 9;
     -fx-background-radius: 5;
-    -fx-background-color: #555;
+    -fx-background-color: #4a5261;
 }
-.status-dot.ok    { -fx-background-color: -fx-ok; }
-.status-dot.down  { -fx-background-color: -fx-accent; }
+.status-dot.ok   { -fx-background-color: -fx-ok; }
+.status-dot.down { -fx-background-color: -fx-accent; }
 
 /* ---------- tabs ---------- */
 .tab-pane > .tab-header-area {
     -fx-background-color: -fx-bg-soft;
-    -fx-padding: 4 8 0 8;
+    -fx-padding: 6 16 0 16;
+    -fx-border-color: transparent transparent -fx-line transparent;
 }
 .tab-pane > .tab-header-area .tab {
     -fx-background-color: transparent;
-    -fx-padding: 8 18 8 18;
+    -fx-padding: 9 20 9 20;
 }
 .tab-pane > .tab-header-area .tab-label {
     -fx-text-fill: -fx-text-dim;
     -fx-font-size: 13px;
 }
 .tab-pane > .tab-header-area .tab:selected {
-    -fx-background-color: -fx-card;
+    -fx-background-color: -fx-bg;
     -fx-border-color: transparent transparent -fx-accent transparent;
     -fx-border-width: 0 0 2 0;
 }
@@ -68,58 +76,71 @@
 
 /* ---------- generic controls ---------- */
 .button {
-    -fx-background-color: -fx-card;
+    -fx-background-color: -fx-card-2;
     -fx-text-fill: -fx-text;
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-border-color: -fx-card-border;
-    -fx-padding: 7 16 7 16;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+    -fx-padding: 8 18 8 18;
     -fx-cursor: hand;
 }
-.button:hover  { -fx-border-color: -fx-accent-soft; }
-.button:pressed { -fx-background-color: #232b36; }
-.button:disabled { -fx-text-fill: -fx-text-dim; -fx-opacity: 0.6; }
+.button:hover { -fx-background-color: #273040; }
+.button:pressed { -fx-background-color: #303a4c; }
+.button:disabled { -fx-text-fill: -fx-text-dim; -fx-opacity: 0.55; }
 
 .button.primary {
     -fx-background-color: -fx-accent;
-    -fx-border-color: transparent;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
-.button.primary:hover { -fx-background-color: -fx-accent-soft; }
+.button.primary:hover  { -fx-background-color: -fx-accent-soft; }
+.button.primary:pressed { -fx-background-color: #c00500; }
 
 .text-field, .choice-box {
     -fx-background-color: -fx-bg-soft;
     -fx-text-fill: -fx-text;
-    -fx-border-color: -fx-card-border;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
-    -fx-padding: 6 10 6 10;
-    -fx-prompt-text-fill: -fx-text-dim;
+    -fx-highlight-fill: -fx-accent;
+    -fx-border-color: -fx-line;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 7 12 7 12;
+    -fx-prompt-text-fill: #5b6473;
+}
+.text-field:focused, .choice-box:focused {
+    -fx-border-color: -fx-accent-soft;
 }
 .choice-box > .label { -fx-text-fill: -fx-text; }
+.choice-box .arrow, .choice-box .arrow-button { -fx-background-color: -fx-text-dim; }
+
 .text-area {
     -fx-control-inner-background: -fx-bg-soft;
     -fx-text-fill: -fx-text;
     -fx-font-family: "Consolas", monospace;
     -fx-font-size: 11px;
     -fx-background-color: -fx-bg-soft;
-    -fx-border-color: -fx-card-border;
-    -fx-border-radius: 6;
+    -fx-border-color: -fx-line;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
 }
 .label { -fx-text-fill: -fx-text; }
 .dim   { -fx-text-fill: -fx-text-dim; }
+.hint  { -fx-text-fill: -fx-text-dim; -fx-font-size: 12px; }
 
-/* ---------- cards ---------- */
+/* ---------- cards & stats ---------- */
 .card {
     -fx-background-color: -fx-card;
-    -fx-background-radius: 10;
-    -fx-border-color: -fx-card-border;
-    -fx-border-radius: 10;
-    -fx-padding: 14;
+    -fx-background-radius: 12;
+    -fx-border-color: -fx-line;
+    -fx-border-radius: 12;
+    -fx-padding: 16;
+}
+.section-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text;
 }
 .stat-value {
-    -fx-font-size: 22px;
+    -fx-font-size: 21px;
     -fx-font-weight: bold;
     -fx-text-fill: -fx-text;
 }
@@ -127,89 +148,127 @@
     -fx-text-fill: -fx-text-dim;
     -fx-font-size: 11px;
 }
-.section-title {
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-text-fill: -fx-text;
-}
 
 /* ---------- verdict / banners ---------- */
 .verdict-title {
-    -fx-font-size: 24px;
+    -fx-font-size: 23px;
     -fx-font-weight: bold;
     -fx-text-fill: -fx-ok;
 }
+.podium    { -fx-text-fill: -fx-medium-comp; -fx-font-weight: bold; }
+.points    { -fx-text-fill: -fx-text; }
 .banner-error {
     -fx-background-color: #3a1215;
     -fx-border-color: -fx-accent;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
     -fx-padding: 8 12 8 12;
     -fx-text-fill: #ff9a96;
 }
-.banner-info {
-    -fx-text-fill: -fx-text-dim;
+.banner-info { -fx-text-fill: -fx-text-dim; }
+
+/* compound chips (F1 tyre colors) */
+.chip {
+    -fx-padding: 2 10 2 10;
+    -fx-background-radius: 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-color: -fx-card-2;
+    -fx-text-fill: -fx-text;
+}
+.chip-SOFT   { -fx-background-color: -fx-soft-comp;   -fx-text-fill: #2a0503; }
+.chip-MEDIUM { -fx-background-color: -fx-medium-comp; -fx-text-fill: #2b2300; }
+.chip-HARD   { -fx-background-color: -fx-hard-comp;   -fx-text-fill: #1c2129; }
+.chip-pit {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
 }
 
 /* ---------- tables & lists ---------- */
 .table-view, .list-view {
-    -fx-background-color: transparent;
-    -fx-border-color: -fx-card-border;
-    -fx-border-radius: 8;
+    -fx-background-color: -fx-card;
+    -fx-border-color: -fx-line;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
 }
 .table-view .column-header-background {
     -fx-background-color: -fx-bg-soft;
-    -fx-background-radius: 8 8 0 0;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 0 4 0 4;
 }
 .table-view .column-header, .table-view .filler {
     -fx-background-color: transparent;
-    -fx-size: 34;
+    -fx-size: 36;
 }
 .table-view .column-header .label {
     -fx-text-fill: -fx-text-dim;
     -fx-font-weight: bold;
+    -fx-font-size: 11px;
 }
 .table-row-cell {
     -fx-background-color: -fx-card;
-    -fx-border-color: transparent transparent #222a35 transparent;
+    -fx-border-color: transparent transparent #1e2530 transparent;
     -fx-table-cell-border-color: transparent;
+    -fx-padding: 3 0 3 0;
 }
-.table-row-cell:odd { -fx-background-color: #171d26; }
-.table-row-cell:selected { -fx-background-color: #2c3542; }
+.table-row-cell:odd { -fx-background-color: #141924; }
+.table-row-cell:selected {
+    -fx-background-color: #2b3444;
+    -fx-border-color: transparent transparent -fx-accent-soft transparent;
+}
 .table-view .table-cell { -fx-text-fill: -fx-text; }
 .list-cell {
     -fx-background-color: -fx-card;
     -fx-text-fill: -fx-text;
-    -fx-padding: 8 12 8 12;
-    -fx-border-color: transparent transparent #222a35 transparent;
+    -fx-padding: 9 14 9 14;
+    -fx-border-color: transparent transparent #1e2530 transparent;
 }
-.list-cell:filled:hover, .list-cell:selected {
-    -fx-background-color: #2c3542;
+.list-cell:filled:hover { -fx-background-color: #202837; }
+.list-cell:selected {
+    -fx-background-color: #2b3444;
+    -fx-border-color: transparent transparent -fx-accent-soft transparent;
 }
 
 /* ---------- progress bar (confidence) ---------- */
+.progress-bar {
+    -fx-pref-height: 12;
+}
 .progress-bar > .track {
     -fx-background-color: -fx-bg-soft;
     -fx-background-radius: 6;
+    -fx-border-radius: 6;
 }
 .progress-bar > .bar {
     -fx-background-color: linear-gradient(to right, -fx-accent, -fx-warn);
     -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 4;
 }
 
 /* ---------- charts ---------- */
 .chart {
     -fx-background-color: -fx-card;
-    -fx-border-color: -fx-card-border;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
+    -fx-border-color: -fx-line;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
 }
 .chart-plot-background { -fx-background-color: transparent; }
-.chart-content { -fx-padding: 8; }
+.chart-content { -fx-padding: 10; }
 .chart-title { -fx-text-fill: -fx-text-dim; }
 .axis-label, .axis-tick-mark, .chart-legend { -fx-text-fill: -fx-text-dim; }
 .chart-vertical-grid-lines, .chart-horizontal-grid-lines {
-    -fx-stroke: #232b36;
+    -fx-stroke: #202837;
     -fx-stroke-dash-array: 2 4;
 }
-.default-color0.chart-series-line { -fx-stroke: -fx-chart-line; -fx-stroke-width: 2px; }
+.default-color0.chart-series-line { -fx-stroke: -fx-medium-comp; -fx-stroke-width: 2.5px; }
+
+/* ---------- scrollbars (unobtrusive) ---------- */
+.scroll-bar { -fx-background-color: transparent; }
+.scroll-bar .thumb {
+    -fx-background-color: #2c3542;
+    -fx-background-radius: 5;
+}
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+}

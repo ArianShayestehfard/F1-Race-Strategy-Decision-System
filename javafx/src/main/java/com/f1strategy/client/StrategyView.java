@@ -33,6 +33,7 @@ class StrategyView extends VBox {
     private final Label status = Ui.label("", "banner-info");
     private final Label verdict = Ui.label("Pick a race and a driver, then ask for a recommendation.", "dim");
     private final ProgressBar confidence = new ProgressBar(0);
+    private final Label confidencePct = Ui.label("—", "dim");
     private final ListView<String> scenarios = new ListView<>();
 
     StrategyView(ApiClient api) {
@@ -57,7 +58,7 @@ class StrategyView extends VBox {
 
         VBox verdictCard = Ui.card("Recommended strategy",
                 verdict,
-                Ui.row(Ui.label("Confidence:"), confidence),
+                Ui.row(Ui.label("Confidence:"), confidence, confidencePct),
                 status);
         getChildren().addAll(Ui.card("Current race state", inputs), verdictCard, scenarios);
     }
@@ -104,6 +105,7 @@ class StrategyView extends VBox {
                 res.path("recommended_compound").asText(),
                 res.path("expected_finish_position").asInt()));
         confidence.setProgress(res.path("confidence").asDouble(0));
+        confidencePct.setText(String.format("%.0f%%", res.path("confidence").asDouble(0) * 100));
 
         var items = FXCollections.<String>observableArrayList();
         for (JsonNode s : res.path("scenarios")) {

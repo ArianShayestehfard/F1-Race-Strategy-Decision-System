@@ -80,6 +80,14 @@ class SimulateView extends VBox {
         cLap.setPrefWidth(60);
         TableColumn<Row, String> cComp = new TableColumn<>("Compound");
         cComp.setCellValueFactory(new PropertyValueFactory<>("compound"));
+        cComp.setCellFactory(col -> new javafx.scene.control.TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty || item == null ? null : Ui.compoundChip(item));
+                setText(null);
+            }
+        });
         cComp.setPrefWidth(120);
         TableColumn<Row, Integer> cAge = new TableColumn<>("Tyre age");
         cAge.setCellValueFactory(new PropertyValueFactory<>("tyreAge"));
@@ -89,6 +97,16 @@ class SimulateView extends VBox {
         cPos.setPrefWidth(90);
         TableColumn<Row, String> cPit = new TableColumn<>("Pit");
         cPit.setCellValueFactory(new PropertyValueFactory<>("pit"));
+        cPit.setCellFactory(col -> new javafx.scene.control.TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty || item == null || item.isBlank()
+                        ? null
+                        : Ui.label("PIT", "chip", "chip-pit"));
+                setText(null);
+            }
+        });
         cPit.setPrefWidth(60);
         table.getColumns().setAll(cLap, cComp, cAge, cPos, cPit);
         table.setPlaceholder(Ui.label("Run a simulation to see the lap-by-lap timeline.", "dim"));
@@ -139,8 +157,13 @@ class SimulateView extends VBox {
     private void render() {
         JsonNode res = lastResult.get();
         long totalMs = res.path("total_time_ms").asLong();
-        resultLine.setText(String.format("Finish P%d   ·   race time %s",
-                res.path("finish_position").asInt(), Fmt.totalTime(totalMs)));
+        int position = res.path("finish_position").asInt();
+        resultLine.setText(String.format("Finish P%d   ·   race time %s", position, Fmt.totalTime(totalMs)));
+        // podium deserves the gold accent; keep the rest calm
+        resultLine.getStyleClass().remove("podium");
+        if (position <= 3) {
+            resultLine.getStyleClass().add("podium");
+        }
         var rows = FXCollections.<Row>observableArrayList();
         for (JsonNode t : res.path("timeline")) {
             rows.add(new Row(t));
