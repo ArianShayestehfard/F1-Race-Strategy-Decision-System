@@ -17,6 +17,15 @@ from .ingest import COMPOUND_MODEL, FUEL_MS_PER_KG, FUEL_START_KG_PER_LAP
 
 DIRTY_AIR_WINDOW_MS = 1000
 DIRTY_AIR_PENALTY_MS = 250
+WET_PIT_EXTRA_S = 3.5     # pit lane is slower in the wet
+RAIN_THRESHOLD_MM = 0.5
+
+
+def _pit_overhead_s(base_s: float, rainfall: float) -> int:
+    """Pit stops take longer when the pit lane is wet."""
+    if rainfall > RAIN_THRESHOLD_MM:
+        return int((base_s + WET_PIT_EXTRA_S * min(rainfall, 3.0) / 3.0) * 1000)
+    return int(base_s * 1000)
 
 
 def _weather_by_lap(conn, race_id: str, total_laps: int) -> dict[int, float]:
@@ -153,7 +162,7 @@ def simulate_race(race_id: str, driver_id: str, start_compound: str = "MEDIUM",
             if d != driver_id and gaps[d] < DIRTY_AIR_WINDOW_MS:
                 ms += DIRTY_AIR_PENALTY_MS
             if lap_no in (planned if d == driver_id else others_pits.get(d, [])):
-                ms += int(pit_stop_overhead_s * 1000)
+                ms += _pit_overhead_s(pit_stop_overhead_s, r)
                 tyre_age[d] = 0
                 is_pit = True
             else:

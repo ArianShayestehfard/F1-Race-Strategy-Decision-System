@@ -77,6 +77,8 @@ returns the best scenario.
   "recommended_compound": "HARD",
   "expected_finish_position": 3,
   "confidence": 0.84,
+  "rain_ahead": false,
+  "rain_onset_lap": null,
   "scenarios": [
     { "pit_lap": 22, "compound": "HARD", "finish_position": 3, "total_time_ms": 5310000 },
     { "pit_lap": 20, "compound": "HARD", "finish_position": 4, "total_time_ms": 5313400 },
@@ -84,6 +86,10 @@ returns the best scenario.
   ]
 }
 ```
+Weather-aware: when the race's rain profile shows rain ahead, the
+candidate list widens to INTERMEDIATE (any rain) and WET (≥ 2.5 mm),
+and `rain_ahead` / `rain_onset_lap` tell the caller when the wet window
+starts — so the engine can say "pit just before the rain".
 
 ### `POST /strategy/duel`
 Pit-cycle duel vs a rival — the undercut/overcut question. The rival runs

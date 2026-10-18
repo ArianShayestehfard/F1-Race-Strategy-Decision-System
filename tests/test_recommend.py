@@ -4,7 +4,7 @@ from app.recommend import recommend_strategy
 def test_recommend_contract(demo_db):
     res = recommend_strategy("2024-8", "nor", current_lap=18)
     assert 18 <= res["recommended_pit_lap"] <= 30
-    assert res["recommended_compound"] in ("SOFT", "MEDIUM", "HARD")
+    assert res["recommended_compound"] in ("SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET")
     assert 1 <= res["expected_finish_position"] <= 20
     assert 0.5 <= res["confidence"] <= 0.95
     assert len(res["scenarios"]) >= 2

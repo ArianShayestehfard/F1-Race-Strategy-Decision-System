@@ -249,7 +249,7 @@ def main() -> None:
     p.add_argument("--demo", action="store_true", help="generate offline demo race instead of downloading")
     args = p.parse_args()
     if args.demo:
-        print(generate_demo_race())
+        print(generate_demo_race(year=args.year or 2024, rnd=args.rnd or 8))
     elif args.year and args.rnd:
         if args.source == "openf1":
             from .openf1_ingest import ingest_openf1

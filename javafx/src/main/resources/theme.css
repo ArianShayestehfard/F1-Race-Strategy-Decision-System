@@ -4,21 +4,24 @@
    colors come from the tokens so the palette stays consistent. */
 
 .root {
-    /* palette */
-    -fx-bg: #0b0e14;
-    -fx-bg-soft: #12161f;
-    -fx-card: #171c26;
-    -fx-card-2: #1d2430;
-    -fx-line: #242c3a;
-    -fx-text: #edf1f7;
-    -fx-text-dim: #9aa4b5;
-    -fx-accent: #e10600;          /* F1 red — primary actions only */
-    -fx-accent-soft: #ff4d47;
-    -fx-ok: #34d17c;
-    -fx-warn: #f5a524;
-    -fx-soft-comp: #ff5a5a;       /* F1 tyre language */
-    -fx-medium-comp: #ffd640;
-    -fx-hard-comp: #e8ecf2;
+    /* palette — soft, low-glare racing tones */
+    -fx-bg: #0c1017;
+    -fx-bg-soft: #131926;
+    -fx-card: #181f2e;
+    -fx-card-2: #202839;
+    -fx-line: #263043;
+    -fx-text: #e3e9f2;
+    -fx-text-dim: #93a1b8;
+    -fx-accent: #e5484d;          /* softened F1 red — primary actions only */
+    -fx-accent-soft: #ff6369;
+    -fx-ok: #3ddc97;
+    -fx-warn: #f9c74f;
+    -fx-soft-comp: #ff7b7b;       /* F1 tyre language, pastel */
+    -fx-medium-comp: #ffd166;
+    -fx-hard-comp: #aebfd4;
+    -fx-inter-comp: #56c288;
+    -fx-wet-comp: #5a9bd8;
+    -fx-chart-line: #7fb5ff;
 
     -fx-background-color: -fx-bg;
     -fx-font-family: "Segoe UI", "Vazirmatn", sans-serif;
@@ -167,7 +170,7 @@
 }
 .banner-info { -fx-text-fill: -fx-text-dim; }
 
-/* compound chips (F1 tyre colors) */
+/* compound chips (F1 tyre colors, softened) */
 .chip {
     -fx-padding: 2 10 2 10;
     -fx-background-radius: 10;
@@ -176,9 +179,11 @@
     -fx-background-color: -fx-card-2;
     -fx-text-fill: -fx-text;
 }
-.chip-SOFT   { -fx-background-color: -fx-soft-comp;   -fx-text-fill: #2a0503; }
-.chip-MEDIUM { -fx-background-color: -fx-medium-comp; -fx-text-fill: #2b2300; }
-.chip-HARD   { -fx-background-color: -fx-hard-comp;   -fx-text-fill: #1c2129; }
+.chip-SOFT        { -fx-background-color: -fx-soft-comp;   -fx-text-fill: #2b0d0d; }
+.chip-MEDIUM      { -fx-background-color: -fx-medium-comp; -fx-text-fill: #2e2509; }
+.chip-HARD        { -fx-background-color: -fx-hard-comp;   -fx-text-fill: #1a2330; }
+.chip-INTERMEDIATE{ -fx-background-color: -fx-inter-comp;  -fx-text-fill: #0f2a1c; }
+.chip-WET         { -fx-background-color: -fx-wet-comp;    -fx-text-fill: #0e2136; }
 .chip-pit {
     -fx-background-color: -fx-accent;
     -fx-text-fill: white;
@@ -189,8 +194,8 @@
 .bar-SOFT        { -fx-background-color: -fx-soft-comp; }
 .bar-MEDIUM      { -fx-background-color: -fx-medium-comp; }
 .bar-HARD        { -fx-background-color: -fx-hard-comp; }
-.bar-INTERMEDIATE{ -fx-background-color: #3fa34d; }
-.bar-WET         { -fx-background-color: #3f6ea3; }
+.bar-INTERMEDIATE{ -fx-background-color: -fx-inter-comp; }
+.bar-WET         { -fx-background-color: -fx-wet-comp; }
 .stint-lap-label {
     -fx-text-fill: #1c2129;
     -fx-font-size: 10px;
@@ -273,7 +278,7 @@
     -fx-stroke: #202837;
     -fx-stroke-dash-array: 2 4;
 }
-.default-color0.chart-series-line { -fx-stroke: -fx-medium-comp; -fx-stroke-width: 2.5px; }
+.default-color0.chart-series-line { -fx-stroke: -fx-chart-line; -fx-stroke-width: 2.5px; }
 
 /* ---------- scrollbars (unobtrusive) ---------- */
 .scroll-bar { -fx-background-color: transparent; }

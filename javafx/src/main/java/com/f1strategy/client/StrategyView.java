@@ -155,11 +155,15 @@ class StrategyView extends VBox {
     }
 
     private void renderRecommendation(JsonNode res) {
+        String rainHint = res.path("rain_ahead").asBoolean(false)
+                ? String.format("   ·   🌧 rain from lap %d", res.path("rain_onset_lap").asInt())
+                : "";
         verdict.setText(String.format(
-                "PIT lap %d  →  %s   ·   expected P%d",
+                "PIT lap %d  →  %s   ·   expected P%d%s",
                 res.path("recommended_pit_lap").asInt(),
                 res.path("recommended_compound").asText(),
-                res.path("expected_finish_position").asInt()));
+                res.path("expected_finish_position").asInt(),
+                rainHint));
         confidence.setProgress(res.path("confidence").asDouble(0));
         confidencePct.setText(String.format("%.0f%%", res.path("confidence").asDouble(0) * 100));
 
