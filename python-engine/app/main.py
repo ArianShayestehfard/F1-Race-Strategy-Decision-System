@@ -45,6 +45,14 @@ class RecommendRequest(BaseModel):
     current_tyre_age: int = 1
 
 
+class DuelRequest(BaseModel):
+    race_id: str
+    driver_id: str
+    rival_id: str
+    current_lap: int
+    current_compound: str = "MEDIUM"
+
+
 @app.get("/health")
 def health() -> dict:
     conn = connect()
@@ -105,6 +113,15 @@ def recommend_endpoint(req: RecommendRequest) -> dict:
     try:
         return recommend.recommend_strategy(req.race_id, req.driver_id, req.current_lap,
                                             req.current_compound, req.current_tyre_age)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.post("/strategy/duel")
+def duel_endpoint(req: DuelRequest) -> dict:
+    try:
+        return recommend.duel_strategy(req.race_id, req.driver_id, req.rival_id,
+                                       req.current_lap, req.current_compound)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

@@ -27,13 +27,15 @@ needs open network/auth) or `"demo": true` (offline synthetic race).
 Statistical report for one driver (Phase 6 modules).
 ```json
 {
-  "race_id": "2024-08", "driver_id": "nor",
+  "race_id": "2024-8", "driver_id": "nor",
   "best_lap_ms": 74123,
   "avg_lap_ms": 76110,
   "pace_trend": [{ "lap": 1, "lap_time_ms": 79000 }, ...],
   "tyre_age_analysis": [{ "compound": "MEDIUM", "tyre_age": 3, "avg_lap_ms": 75500 }, ...],
   "fuel_effect_s_per_lap": 0.032,
-  "gap_analysis": [{ "lap": 20, "gap_to_leader_ms": 12400 }, ...]
+  "gap_analysis": [{ "lap": 20, "gap_to_leader_ms": 12400 }, ...],
+  "stints": [{ "compound": "MEDIUM", "start_lap": 1, "end_lap": 19 }, ...],
+  "pit_stops": [{ "lap": 20, "duration_ms": 23400 }, ...]
 }
 ```
 
@@ -81,6 +83,23 @@ returns the best scenario.
     { "pit_lap": 25, "compound": "HARD", "finish_position": 5, "total_time_ms": 5318900 }
   ]
 }
+```
+
+### `POST /strategy/duel`
+Pit-cycle duel vs a rival — the undercut/overcut question. The rival runs
+his historical plan; we try pitting now / +2 / +5 laps (best compound per
+window) and rank by finishing position relative to the rival.
+```json
+// request
+{ "race_id": "2024-8", "driver_id": "nor", "rival_id": "lec",
+  "current_lap": 18, "current_compound": "MEDIUM" }
+// response
+{ "best_option": "UNDERCUT — pit now, attack on fresh tyres",
+  "best_pit_lap": 18, "best_compound": "SOFT", "beats_rival": true,
+  "rival_plan_pit_laps": [21, 44],
+  "scenarios": [{ "option": "...", "pit_lap": 18, "compound": "SOFT",
+                  "my_finish_position": 3, "rival_finish_position": 4,
+                  "beats_rival": true }, ...] }
 ```
 
 ## Conventions

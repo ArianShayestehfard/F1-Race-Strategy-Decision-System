@@ -56,6 +56,11 @@ public class EngineController {
         return simulations.recommend(request);
     }
 
+    @PostMapping("/strategy/duel")
+    public JsonNode duel(@RequestBody Map<String, Object> request) {
+        return engine.post("/strategy/duel", request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> onError(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY)

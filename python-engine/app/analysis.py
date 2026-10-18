@@ -58,7 +58,33 @@ def driver_report(conn, race_id: str, driver_id: str) -> dict:
         "tyre_age_analysis": tyre_age_analysis,
         "fuel_effect_s_per_lap": fuel_effect_s_per_lap,
         "gap_analysis": gap_analysis,
+        "stints": _stints(valid),
+        "pit_stops": _actual_pit_stops(conn, race_id, driver_id),
     }
+
+
+def _stints(valid: list) -> list[dict]:
+    """Consecutive same-compound stretches of the race -> stint list."""
+    stints: list[dict] = []
+    for r in valid:
+        comp = r["tyre_compound"]
+        lap = r["lap_number"]
+        if not comp:
+            continue
+        if stints and stints[-1]["compound"] == comp and lap == stints[-1]["end_lap"] + 1:
+            stints[-1]["end_lap"] = lap
+        else:
+            stints.append({"compound": comp, "start_lap": lap, "end_lap": lap})
+    return stints
+
+
+def _actual_pit_stops(conn, race_id: str, driver_id: str) -> list[dict]:
+    rows = conn.execute(
+        "SELECT lap_number, duration_ms FROM pit_stops WHERE race_id=? AND driver_id=?"
+        " ORDER BY lap_number",
+        (race_id, driver_id),
+    ).fetchall()
+    return [{"lap": r["lap_number"], "duration_ms": r["duration_ms"]} for r in rows]
 
 
 def _gap_to_leader(conn, race_id: str, driver_id: str, laps: list[int]) -> list[dict]:

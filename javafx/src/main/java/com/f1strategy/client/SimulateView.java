@@ -30,6 +30,7 @@ class SimulateView extends VBox {
     private final ChoiceBox<String> compound = new ChoiceBox<>();
     private final TextField pitLaps = new TextField("20, 40");
     private final Button simulateButton = Ui.button("Simulate race", true);
+    private final Button exportButton = Ui.button("Export report");
     private final Label status = Ui.label("", "banner-info");
     private final Label resultLine = Ui.label("", "verdict-title");
     private final TableView<Row> table = new TableView<>();
@@ -68,9 +69,12 @@ class SimulateView extends VBox {
         compound.getSelectionModel().select("MEDIUM");
         pitLaps.setPromptText("e.g. 20, 40");
 
+        exportButton.setDisable(true);   // enabled once a simulation result exists
+        exportButton.setOnAction(e -> exportReport());
+
         HBox inputs = Ui.row(
                 Ui.label("Start compound:"), compound,
-                Ui.label("Pit laps:"), pitLaps, simulateButton);
+                Ui.label("Pit laps:"), pitLaps, simulateButton, exportButton);
         pitLaps.setPrefWidth(140);
 
         simulateButton.setOnAction(e -> simulate());
@@ -169,6 +173,33 @@ class SimulateView extends VBox {
             rows.add(new Row(t));
         }
         table.setItems(rows);
+        exportButton.setDisable(false);
+    }
+
+    /** Saves the last simulation as a JSON report file (for the race engineers). */
+    private void exportReport() {
+        JsonNode res = lastResult.get();
+        if (res == null) {
+            return;
+        }
+        javafx.stage.FileChooser chooser = new javafx.stage.FileChooser();
+        chooser.setTitle("Export simulation report");
+        chooser.setInitialFileName(String.format("simulation_%s_%s.json",
+                res.path("race_id").asText(), res.path("driver_id").asText()));
+        chooser.getExtensionFilters().add(
+                new javafx.stage.FileChooser.ExtensionFilter("JSON report", "*.json"));
+        java.io.File target = chooser.showSaveDialog(getScene() == null ? null : getScene().getWindow());
+        if (target == null) {
+            return;
+        }
+        try {
+            java.nio.file.Files.writeString(target.toPath(), res.toPrettyString());
+            status.setText("Report saved: " + target.getAbsolutePath());
+            status.getStyleClass().remove("banner-error");
+        } catch (java.io.IOException ex) {
+            status.setText("Export failed: " + ex.getMessage());
+            status.getStyleClass().add("banner-error");
+        }
     }
 
     void setRace(String raceId) {

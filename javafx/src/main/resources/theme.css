@@ -184,6 +184,19 @@
     -fx-text-fill: white;
 }
 
+/* stint timeline bar (one colored segment per tyre stint) */
+.stint-bar { -fx-min-height: 22; -fx-max-height: 22; -fx-background-radius: 6; }
+.bar-SOFT        { -fx-background-color: -fx-soft-comp; }
+.bar-MEDIUM      { -fx-background-color: -fx-medium-comp; }
+.bar-HARD        { -fx-background-color: -fx-hard-comp; }
+.bar-INTERMEDIATE{ -fx-background-color: #3fa34d; }
+.bar-WET         { -fx-background-color: #3f6ea3; }
+.stint-lap-label {
+    -fx-text-fill: #1c2129;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
 /* ---------- tables & lists ---------- */
 .table-view, .list-view {
     -fx-background-color: -fx-card;
