@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="0- ALL SERVICES (Python + Backend + UI)" type="CompoundRunConfigurationType" factoryName="Compound">
+    <toRun name="1- Python Engine (:8000)" type="ShConfigurationType" />
+    <toRun name="2- Spring Boot Backend (:8088)" type="Application" />
+    <toRun name="3- JavaFX UI" type="MavenRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

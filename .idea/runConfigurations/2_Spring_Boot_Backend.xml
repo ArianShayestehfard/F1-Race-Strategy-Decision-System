@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="2- Spring Boot Backend (:8088)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.f1strategy.backend.BackendApplication" />
+    <module name="backend" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

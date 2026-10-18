@@ -11,7 +11,8 @@ database/race.db
 # Java
 target/
 *.class
-.idea/
+.idea/*
+!.idea/runConfigurations/
 *.iml
 
 # OS
