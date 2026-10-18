@@ -1,6 +1,10 @@
-# IDE
-.idea/
+# Editor
 .vscode/
+.idea/shelf/
+.idea/httpRequests/
+.idea/queries/
+.idea/dataSources/
+.idea/dataSources.local.xml
 # Python
 __pycache__/
 *.pyc
@@ -13,9 +17,11 @@ data/raw/
 data/cache/
 *.pkl
 *.joblib
+# Build artifacts, local databases, generated models
+models/
+backend/target/
+database/*.db
 # Secrets and OS
 .env
 .DS_Store
 Thumbs.db
-# JetBrains module files
-*.iml
