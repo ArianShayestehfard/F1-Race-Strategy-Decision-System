@@ -37,15 +37,22 @@ public class ApiClient {
     }
 
     /**
-     * One retry on transient IO errors (e.g. a pooled connection closed while
-     * the backend restarts) so a race at startup does not leave empty screens.
+     * Retries transient IO errors with backoff (0.8s / 2s / 4s) so a request
+     * issued while the backend restarts still lands (~7s of tolerance).
      */
     private HttpResponse<String> sendWithRetry(HttpRequest req) throws Exception {
-        try {
-            return HTTP.send(req, HttpResponse.BodyHandlers.ofString());
-        } catch (java.io.IOException transientError) {
-            Thread.sleep(800);
-            return HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+        long[] backoffMs = {0, 800, 2000, 4000};
+        java.io.IOException lastError = null;
+        for (long delay : backoffMs) {
+            if (delay > 0) {
+                Thread.sleep(delay);
+            }
+            try {
+                return HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+            } catch (java.io.IOException transientError) {
+                lastError = transientError;
+            }
         }
+        throw lastError;
     }
 }
