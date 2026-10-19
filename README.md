@@ -180,12 +180,12 @@ browser  ──►  Spring Boot :8088  ──►  FastAPI engine :8000
 │ Least Squares + Cliff│
 └──────────┬───────────┘
            │
-     ┌─────┼─────┬─────────┐
-     ▼     ▼     ▼         ▼
-  Strategy Race  Pit      ML Lap-Time
-  Search   Sim   Recommend Prediction
-     │     │     │         │
-     └─────┼─────┴─────────┘
+┌──────────┼────┬───────────┐
+▼         ▼     ▼           ▼
+Strategy Race   Pit    ML Lap-Time
+Search   Sim Recommend Prediction
+│          │     │          │
+└──────────┼─────┴──────────┘
            │
            ▼
 ┌──────────────────────┐
@@ -418,11 +418,17 @@ The main limitations include:
 
 ## Author
 
-**Arian Shayestehfard**
+</div>
+<p align="center">
+  <b>Arian Shayestehfard</b>
+  <br>
+  Computer Engineering Student
+  <br><br>
+  <a href="https://github.com/ArianShayestehfard">
+    <img src="https://img.shields.io/badge/GitHub-ArianShayestehfard-181717?logo=github&logoColor=white" alt="GitHub">
+  </a>
+</p>
 
-Computer Engineering Student
-
-GitHub: [@ArianShayestehfard](https://github.com/ArianShayestehfard)
 
 ---
 
