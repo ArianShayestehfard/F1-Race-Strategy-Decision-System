@@ -202,14 +202,13 @@ Search   Sim Recommend Prediction
 
 ```mermaid
 flowchart LR
-    UI["Web Dashboard"] -->|"/api/**"| BE["Spring Boot Backend :8088"]
-    BE -->|"JPA"| DB[("SQLite\nrace.db")]
-    BE -->|"HTTP proxy"| PY["FastAPI Engine :8000"]
+    UI["Web Dashboard"] -->|"REST API"| BE["Spring Boot Backend<br/>:8088"]
+    BE -->|"JPA"| DB[("SQLite<br/>race.db")]
+    BE -->|"HTTP proxy"| PY["FastAPI Engine<br/>:8000"]
     PY -->|"Calibrated model JSON"| M["models/"]
     PY -->|"Ingest"| SRC["OpenF1 / FastF1"]
     BE -->|"Saves simulation results"| DB
 ```
-
 ---
 
 ## Dataset
