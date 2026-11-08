@@ -415,17 +415,35 @@ The main limitations include:
 
 ---
 
-## Author
+## Authors
 
-</div>
+<h2 align="center">Authors</h2>
+
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <strong>Arian Shayestehfard</strong>
+      <br />
+      <sub>Computer Engineering</sub>
+      <br /><br />
+      <a href="https://github.com/ArianShayestehfard">
+        <img src="https://img.shields.io/badge/GitHub-Visit%20Profile-181717?style=for-the-badge&logo=github&logoColor=white" />
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <strong>Katayoun Akhoundi</strong>
+      <br />
+      <sub>Computer Engineering</sub>
+      <br /><br />
+      <a href="https://github.com/KatayounAkhoundi">
+        <img src="https://img.shields.io/badge/GitHub-Visit%20Profile-181717?style=for-the-badge&logo=github&logoColor=white" />
+      </a>
+    </td>
+  </tr>
+</table>
+
 <p align="center">
-  <b>Arian Shayestehfard</b>
-  <br>
-  Computer Engineering Student
-  <br><br>
-  <a href="https://github.com/ArianShayestehfard">
-    <img src="https://img.shields.io/badge/GitHub-ArianShayestehfard-181717?logo=github&logoColor=white" alt="GitHub">
-  </a>
+  <sub>Developed collaboratively with a shared interest in software engineering.</sub>
 </p>
 
 
@@ -434,3 +452,4 @@ The main limitations include:
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
